@@ -1,4 +1,5 @@
 import { useState } from "react";
+import api from "../services/api";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -7,10 +8,35 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    console.log("Login:", {
-      email,
-      password,
-    });
+    console.log("1. Login clicked");
+    console.log("2. Email:", email);
+
+    try {
+      console.log("3. Sending request");
+
+      const response = await api.post(
+        "/auth/login",
+        {
+          email,
+          password,
+        }
+      );
+
+      console.log("4. Response:", response.data);
+      localStorage.setItem(
+        "token",
+        response.data.token
+      );
+      console.log(
+        "Saved token :",
+        localStorage.getItem("token")
+      );
+    } catch (error) {
+      console.error(
+        "Login error:",
+        error.response?.data || error.message
+      );
+    }
   };
 
   return (
@@ -24,6 +50,7 @@ function LoginPage() {
             setEmail(e.target.value)
           }
         />
+        <p />
         <input
           type="password"
           placeholder="Enter password"
